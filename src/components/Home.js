@@ -164,7 +164,7 @@ const Home = () => {
                     />
 
                     {displayState && Object.keys(displayState).map((key) => ( 
-                        (<div key={key}>
+                        (<div key={key} className='flex justify-center'>
                         <CardSimple handleChange={handleChange} handleUpdate={handleUpdate} uid={key} data={displayState[key]} flag={displayState[key].uid !== auth.currentUser.uid} />
                         </div>
                         )
