@@ -20,18 +20,7 @@ export default function CardSimple({ uid, data, flag }) {
             </Typography>
             {!flag && Object.entries(data).map(([key, value]) => (
                 <Typography variant="body2" color="text.secondary" key={key}>
-                Check {key}: <Input key={value}
-                            handleChange={handleChange}
-                            // value={selectedProject[key]}
-                            // labelText={key}
-                            labelFor={key}
-                            id={key}
-                            name={key}
-                            text={value}
-                            // type={Text}
-                            isRequired={true}
-                            placeholder={key}
-                            />
+                Check {key}: {value}
                 </Typography>
             ))}
             {flag && Object.entries(data).map(([key, value]) => (
