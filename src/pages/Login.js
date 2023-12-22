@@ -5,6 +5,7 @@ export default function LoginPage(){
     return(
         <>
              <Header
+                className="mx-auto my-4"
                 heading="Login to your account"
                 paragraph="Don't have an account yet? "
                 linkName="Signup"

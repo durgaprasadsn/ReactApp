@@ -149,7 +149,12 @@ const Register = () => {
               /> */}
             </div>)
           ))}
-          <Button variant="contained" onClick={handleUpdate}>Update Project</Button>
+          <div className="flex justify-center">
+            <Button variant="contained" onClick={handleUpdate}>
+              Update Project
+            </Button>
+          </div>
+          {/* <Button className='mx-auto my-4 flex justify-center' variant="contained" onClick={handleUpdate}>Update Project</Button> */}
         </div>
       )}
       {isSuccessAlertVisible && (

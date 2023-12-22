@@ -62,7 +62,7 @@ export default function Login(){
                 
                 )
             }
-            <FormAction handleSubmit={handleSubmit} text="Login" />
+            <FormAction className="mx-auto" handleSubmit={handleSubmit} text="Login" />
         </div>
 
       </form>
