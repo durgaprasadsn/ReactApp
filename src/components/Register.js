@@ -60,6 +60,7 @@ const Register = () => {
     console.log("Project selected " + JSON.stringify(project));
     console.log(registerState);
     setSelectedProject(project);
+    setSuccessAlertVisible(false);
   };
 
   // Function to update project details
@@ -68,14 +69,14 @@ const Register = () => {
         console.log(registerState);
         console.log("On Click of Update " + selectedProject.projectName + " " + auth.currentUser.uid);
         // const projectRef = ref(db, `${selectedProject.projectName}/${auth.currentUser.uid}`);
-        const path_update = "ProjectBids/" + selectedProject.projectName + "/" + auth.currentUser.uid;
+        const path_update = selectedProject.projectName + "/" + auth.currentUser.uid;
         const updates = {}
         updates[path_update] = registerState;
         update(ref(db), updates).then( () => {
             console.log("SUCCESS");
             setSuccessAlertVisible(true);
             // setRegisterState({});
-            // setSelectedProject(null);
+            setSelectedProject(null);
           } ) .catch((error) => {
             console.log(error)
           } )
@@ -124,7 +125,7 @@ const Register = () => {
             <br></br>
           {/* <h2>{selectedProject.projectName}</h2> */}
           {/* Dynamically generate input fields based on keys */}
-          {Object.keys(selectedProject).map((key, value) => (
+          {selectedProject && Object.keys(selectedProject).map((key, value) => (
             key !== "projectName" && (<div key={key}>
               <Input
                             key={key}

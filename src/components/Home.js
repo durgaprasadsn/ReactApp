@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import NavbarSimple from './Navbar';
 import CardSimple from './Card';
 import SelectBasic from './DropDown';
-import { ref, onValue } from '@firebase/database';
+import { ref, onValue, update } from '@firebase/database';
 import { auth, db } from '../services/firebase';
 
 const Home = () => {
@@ -93,15 +93,10 @@ const Home = () => {
                             uid: key,
                             ...value,
                         }));
-                        // console.log("Bid Array " + JSON.stringify(bidArray));
+                        console.log("Bid Array " + JSON.stringify(bidArray));
+                        const desiredUid = auth.currentUser.uid;
+                        bidArray.sort((a, b) => (a.uid === desiredUid ? -1 : b.uid === desiredUid ? 1 : 0));
                         setDisplayState(bidArray);
-                        console.log("Current User " + auth.currentUser.uid + " " + displayState);
-                        Object.keys(bidArray).map((key) => {
-                            console.log("Check the details " + bidArray[key].uid !== auth.currentUser.uid);
-                        })
-                        Object.entries(bidArray).map((key, value) => {
-                            console.log("Check the details " + key[1]);
-                        })
                     }
                 });
                 console.log(snapshot);
@@ -114,9 +109,46 @@ const Home = () => {
         // Cleanup function not required for this useEffect
     }, [selectedProject]); // Run this effect whenever selectedProject changes
 
+    const [cardState,setCardState]=React.useState(null);
+    var isUpdate = false;
+    // var successAlertVisible = false;
+    function updateState(e) {
+        isUpdate = true;
+        setCardState({ 
+            ...cardState,[e.target.id]:e.target.value
+        })
+    }
+    const handleChange = (e) => {
+        e.preventDefault();
+        updateState(e);
+    }
+
+    const handleUpdate=(e)=>{
+        console.log("Handle Update");
+        e.preventDefault();
+        // console.log(cardState + " " + selectedProject.projectName + " " + auth.currentUser.uid);
+        const path_update = selectedProject.projectName + "/" + auth.currentUser.uid;
+        
+        const mergedObject = {
+            ...displayState[0],
+            ...cardState
+          };
+        delete mergedObject.uid;
+
+        const updates = {}
+        updates[path_update] = mergedObject;
+
+        update(ref(db), updates).then( () => {
+            console.log("SUCCESS");
+          } ) .catch((error) => {
+            console.log(error)
+          } )
+      }
+
     const handleProjectSelect = (project) => {
         console.log("Project selected " + JSON.stringify(project));
         setSelectedProject(project);
+        setDisplayState(null);
     };
 
     return (
@@ -133,7 +165,7 @@ const Home = () => {
 
                     {displayState && Object.keys(displayState).map((key) => ( 
                         (<div key={key}>
-                        <CardSimple uid={key} data={displayState[key]} flag={displayState[key].uid !== auth.currentUser.uid} />
+                        <CardSimple handleChange={handleChange} handleUpdate={handleUpdate} uid={key} data={displayState[key]} flag={displayState[key].uid !== auth.currentUser.uid} />
                         </div>
                         )
                     ))} 
