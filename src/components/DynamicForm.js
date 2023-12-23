@@ -4,10 +4,14 @@ import TextField from '@mui/material/TextField';
 import AddIcon from '@mui/icons-material/Add';
 import RemoveIcon from '@mui/icons-material/Remove';
 import { insert } from '../services/authService';
+import { Alert } from '@mui/material';
+import { set, ref } from '@firebase/database';
+import { db } from '../services/firebase';
 
 const DynamicForm = () => {
   const [formFields, setFormFields] = useState([{ id: 1, value: '' }]);
-
+  const [isSuccessAlertVisible, setSuccessAlertVisible] = useState(false);
+  const project_select = document.getElementById('project_name');
   const addFormField = () => {
     const newField = { id: formFields.length + 1, value: '' };
     setFormFields([...formFields, newField]);
@@ -26,20 +30,32 @@ const DynamicForm = () => {
   };
 
   const handleSubmit = () => {
-    // Perform actions to store the form data, e.g., send to an API
-    console.log('Form Data:', JSON.stringify(formFields));
-    const newSet = {};
-    const projectName = document.getElementById('project_name').value;
-    for (const [key, value] of Object.entries(formFields)) {
-        console.log("Key and Value " + key + " " + value.value);
-        newSet[value.value] = "";
+    try {
+        // Perform actions to store the form data, e.g., send to an API
+        console.log('Form Data:', JSON.stringify(formFields));
+        const newSet = {};
+        const projectName = project_select.value;
+        for (const [key, value] of Object.entries(formFields)) {
+            console.log("Key and Value " + key + " " + value.value);
+            newSet[value.value] = "";
+        }
+        // const status = insert("projects/" + projectName, newSet);
+        const path = "projects/" + projectName;
+        set(ref(db, path), newSet).then(() => {
+            console.log("Successufully updated the db");
+            setSuccessAlertVisible(true);
+            setFormFields([{ id: 1, value: '' }]);
+            project_select.value = "";
+            return 
+        }).catch(alert);    
+    } catch(error) {
+        console.log(error);
     }
-    const status = insert("projects/" + projectName, newSet);
-    console.log("Status " + status);
     
   };
 
   return (
+    <>
     <div className="max-w-md mx-auto mt-8 p-4 border border-gray-300 rounded">
         <div>
         <TextField
@@ -96,6 +112,13 @@ const DynamicForm = () => {
       </Button>
       </div>
     </div>
+    {isSuccessAlertVisible && (
+        <Alert severity="success">
+        {/* <AlertTitle>Success</AlertTitle> */}
+        Successfully Updated.
+        </Alert>)
+    }
+    </>
   );
 };
 

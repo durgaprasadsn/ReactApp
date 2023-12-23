@@ -45,10 +45,10 @@ const insert = async (path, json) => {
         console.log(path, json);
         const status = await set(ref(db, path), json).then(() => {
             console.log("Successufully updated the db");
-            <Alert severity="success">
-            {/* <AlertTitle>Success</AlertTitle> */}
-            This is a success alert — <strong>check it out!</strong>
-            </Alert>
+            // <Alert severity="success">
+            // {/* <AlertTitle>Success</AlertTitle> */}
+            // This is a success alert — <strong>check it out!</strong>
+            // </Alert>
         }).catch(alert);
     } catch (error) {
         console.log("Error in insert " + error);
