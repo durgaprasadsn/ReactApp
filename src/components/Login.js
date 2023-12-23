@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { loginFields } from "../constants/formFields";
 import FormAction from "./FormAction";
 import Input from "./Input";
-import { logIn } from "../services/authService";
+import { logIn, isAuthenticated } from "../services/authService";
 import { useNavigate } from 'react-router';
 
 const fields=loginFields;
@@ -10,7 +10,10 @@ let fieldsState = {};
 fields.forEach(field=>fieldsState[field.id]='');
 
 export default function Login(){
+    console.log("Check Authentication " + isAuthenticated());
     const [loginState,setLoginState]=useState(fieldsState);
+    const [error, setError] = useState(null);
+
     const navigate = useNavigate();
     const handleChange=(e)=>{
         setLoginState({...loginState,[e.target.id]:e.target.value})
@@ -34,15 +37,27 @@ export default function Login(){
 
     //handle Login API Integration here
     async function loginAccount(email, password) {
-        const user = await logIn(email, password);
-        // console.log("User " + user.email);
-        if (user) {
-            console.log(user.email);
-            navigate("/home");
+        try {
+            setError(null);
+            const user = await logIn(email, password);
+            // console.log("User " + user.email);
+            if (user) {
+                console.log(user.email);
+                if (user.email === "admin@gmail.com") {
+                    navigate("/admin/timeupdate");
+                } else {
+                    navigate("/home");
+                }
+            }
+        } catch (error) {
+            console.log(error);
+            setError(error.message.replace("Firebase: ", ""));
         }
+        
     }
 
-    return(
+    return(<>
+        {error && <p className='flex justify-center' style={{ color: 'red' }}>{error}</p>}
         <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
         <div className="">
             {
@@ -64,7 +79,7 @@ export default function Login(){
             }
             <FormAction className="mx-auto" handleSubmit={handleSubmit} text="Login" />
         </div>
-
       </form>
+      </>
     )
 }

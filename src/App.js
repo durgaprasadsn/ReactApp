@@ -6,8 +6,10 @@ import {
 } from "react-router-dom";
 import SignupPage from './pages/Signup';
 import LoginPage from './pages/Login';
-import Home from './components/Home';
-import Register from './components/Register';
+import Home from './pages/Home';
+import Register from './pages/Register';
+import Admin from './pages/Admin';
+import AdminRegister from './pages/AdminRegister';
 
 function App() {
   return (
@@ -19,6 +21,8 @@ function App() {
             <Route path="/signup" element={<SignupPage/>} />
             <Route path="/home" element={<Home/>} />
             <Route path="/register" element={<Register/>} />
+            <Route path="/admin/timeupdate" element={<Admin/>} />
+            <Route path="/admin/register" element={<AdminRegister/>} />
         </Routes>
       </BrowserRouter>
     // </div>

@@ -6,12 +6,17 @@ import { snap } from 'popmotion';
 import { Alert } from '@mui/material';
 import AlertTitle from '@mui/material';
 
+function isAuthenticated() {
+    return auth.currentUser;
+}
+
 const signUp = async (email, password) => {
   try {
     const userCredential = await createUserWithEmailAndPassword(auth, email, password);
     return userCredential.user;
   } catch (error) {
     console.log("Error in signup " + error);
+    throw error;
   }
 };
 
@@ -22,6 +27,7 @@ const logIn = async (email, password) => {
     return userCredential.user;
   } catch (error) {
     console.log("Error while logging in " + error);
+    throw error;
   }
 };
 
@@ -30,6 +36,7 @@ const logOut = async () => {
     await signOut(auth);
   } catch (error) {
     console.log("Error in Logout " + error);
+    throw error;
   }
 };
 
@@ -45,6 +52,7 @@ const insert = async (path, json) => {
         }).catch(alert);
     } catch (error) {
         console.log("Error in insert " + error);
+        throw error;
     }
 }
 
@@ -79,4 +87,4 @@ const onValueFromDB = async (path) => {
     } 
 }
 
-export { signUp, logIn, logOut, insert, getFromDB, onValueFromDB };
+export { signUp, logIn, logOut, insert, getFromDB, onValueFromDB, isAuthenticated };

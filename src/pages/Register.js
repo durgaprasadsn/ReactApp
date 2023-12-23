@@ -1,11 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import NavbarSimple from './Navbar';
-import SelectBasic from './DropDown';
+import NavbarSimple from '../components/Navbar';
+import SelectBasic from '../components/DropDown';
 import { auth, db } from '../services/firebase';
-import { onValue, ref, get, child, update } from '@firebase/database';
-import { insert, onValueFromDB } from '../services/authService';
-import Input from './Input';
-import { ButtonDefault } from './Button';
+import { onValue, ref, update } from '@firebase/database';
+import Input from '../components/Input';
 import { Button } from '@mui/material';
 import { Alert } from '@mui/material';
 
@@ -60,6 +58,7 @@ const Register = () => {
     console.log("Project selected " + JSON.stringify(project));
     console.log(registerState);
     setSelectedProject(project);
+    setRegisterState({});
     setSuccessAlertVisible(false);
   };
 
@@ -92,23 +91,6 @@ const Register = () => {
     //   });
     }
   };
-    // TO DO Learn DB onValue from firebase
-    // const dataFromDB = onValueFromDB("projects/");
-    // console.log("Data " + dataFromDB);
-
-    // const value = getFromDB("projects/");
-    // console.log("Value here " + value);
-
-    // get(child(ref(db), 'projects/')).then((snapshot) => {
-    //     if (snapshot.exists()) {
-    //       let data = snapshot.val();
-    //       console.log(data);
-    //     } else {
-    //       console.log("Data not available");
-    //     }
-    //   }).catch((error) => {
-    //     console.error(error);
-    //   });
   return (<>
       <NavbarSimple />
       {/* Dropdown to select a project */}

@@ -13,6 +13,7 @@ fields.forEach(field => fieldsState[field.id]='');
 export default function Signup(){
   const navigate = useNavigate();
   const [signupState,setSignupState]=useState(fieldsState);
+  const [error, setError] = useState(null);
 
   const handleChange=(e)=>setSignupState({...signupState,[e.target.id]:e.target.value});
 
@@ -24,29 +25,40 @@ export default function Signup(){
 
   //handle Signup API Integration here
   async function createAccount(){
-    var email, password, confirmpassword;
+    try {
+      setError(null);
+      var email, password, confirmpassword;
+      
+      for (const [key, value] of Object.entries(signupState)) {
+          if (key === 'emailaddress') {
+              email = value;
+          }
+          if (key === 'password') {
+              password = value;
+          }
+          if (key === 'confirmpassword') {
+              confirmpassword = value;
+          }
+      }
+      if (password === confirmpassword) {
+        const user = await signUp(email, password);
+        console.log(user.email);
+        navigate('/');
+        var json = {email: user.email};
+        insert('/users/' + user.uid, json);
+      } else {
+        setError("Password not matching");
+        throw new Error("Error password not matching");
+      }
+    } catch(error) {
+      console.log(error);
+      setError(error.message.replace("Firebase: ", ""));
+    }
     
-    for (const [key, value] of Object.entries(signupState)) {
-        if (key === 'emailaddress') {
-            email = value;
-        }
-        if (key === 'password') {
-            password = value;
-        }
-        if (key === 'confirmpassword') {
-            confirmpassword = value;
-        }
-    }
-    if (password === confirmpassword) {
-      const user = await signUp(email, password);
-      console.log(user.email);
-      navigate('/');
-      var json = {email: user.email};
-      insert('/users/' + user.uid, json);
-    }
   }
 
-    return(
+    return(<>
+        {error && <p className='flex justify-center' style={{ color: 'red' }}>{error}</p>}
         <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
         <div className="">
         {
@@ -68,9 +80,7 @@ export default function Signup(){
             }
           <FormAction handleSubmit={handleSubmit} text="Signup" />
         </div>
-
-         
-
       </form>
+      </>
     )
 }
