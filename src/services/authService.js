@@ -2,9 +2,6 @@
 import { auth, db } from './firebase';
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut } from 'firebase/auth';
 import { ref, set, get, child, onValue } from '@firebase/database';
-import { snap } from 'popmotion';
-import { Alert } from '@mui/material';
-import AlertTitle from '@mui/material';
 
 function isAuthenticated() {
     return auth.currentUser;

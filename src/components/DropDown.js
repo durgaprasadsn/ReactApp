@@ -1,8 +1,6 @@
 import React, { useState, useRef } from 'react';
 import Select from '@mui/joy/Select';
 import Option from '@mui/joy/Option';
-import IconButton from '@mui/joy/IconButton';
-import CloseRounded from '@mui/icons-material/CloseRounded';
 import FormControl from '@mui/material/FormControl';
 import Box from '@mui/material/Box';
 

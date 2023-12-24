@@ -4,9 +4,6 @@ import CardSimple from '../components/Card';
 import SelectBasic from '../components/DropDown';
 import { ref, onValue, update } from '@firebase/database';
 import { auth, db } from '../services/firebase';
-import { isAuthenticated } from '../services/authService';
-import { useNavigate } from 'react-router';
-
 const Home = () => {
     // console.log("Check Authentication " + isAuthenticated());
     

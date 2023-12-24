@@ -3,7 +3,6 @@ import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
 import AddIcon from '@mui/icons-material/Add';
 import RemoveIcon from '@mui/icons-material/Remove';
-import { insert } from '../services/authService';
 import { Alert } from '@mui/material';
 import { set, ref } from '@firebase/database';
 import { db } from '../services/firebase';

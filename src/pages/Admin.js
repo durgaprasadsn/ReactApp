@@ -1,6 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import NavbarSimple from '../components/Navbar';
-import CardSimple from '../components/Card';
 import SelectBasic from '../components/DropDown';
 import AdminNavBarSimple from '../components/AdminNavbar'
 import { ref, onValue, update } from '@firebase/database';
