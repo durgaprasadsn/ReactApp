@@ -4,6 +4,7 @@ import CardSimple from '../components/Card';
 import SelectBasic from '../components/DropDown';
 import { ref, onValue, update } from '@firebase/database';
 import { auth, db } from '../services/firebase';
+import moment from 'moment';
 const Home = () => {
     // console.log("Check Authentication " + isAuthenticated());
     
@@ -17,12 +18,18 @@ const Home = () => {
     const reference = ref(db, "projects/");
     // const admin_ref = ref(db, "admin/");
 
-    const [currentTime, setCurrentTime] = useState(new Date());
+    const current = moment();
+    const [currentTime, setCurrentTime] = useState(current.format('HH:mm'));
+    const [currentDate, setCurrentDate] = useState(current.format('DD/MM/YYYY'));
 
     useEffect(() => {
         // Update the current time every second
         const intervalId = setInterval(() => {
             setCurrentTime(new Date());
+            const currentDate = moment();
+            setCurrentDate(currentDate.format('DD/MM/YYYY'));
+            setCurrentTime(currentDate.format('HH:mm'));
+            // console.log(formattedDate + " " + formattedTime);
             console.log("Callinggggg at " + new Date() + " " + selectedProject);
             if(selectedProject) {
                 checkDateTime(selectedProject.projectName);
@@ -46,19 +53,19 @@ const Home = () => {
                 console.log(JSON.stringify(time_data));
                 const today = new Date();
                 const comp = new Date(2023, 12, 23, 12, 30, 45);
-                console.log(currTime.toLocaleDateString() + " " + currTime.toLocaleTimeString());
+                // console.log(currTime.toLocaleDateString() + " " + currTime.toLocaleTimeString());
                 console.log(time_data.date + " " + time_data.start_time + " " + time_data.end_time);
-                console.log("Boolean check " + (currTime.toLocaleDateString() < time_data.date) + " " + (currTime.toLocaleTimeString() < time_data.start_time));
+                console.log("Boolean check " + (currentDate < time_data.date) + " " + (currentTime < time_data.start_time));
                 scheduled_time = time_data.date + " between " + time_data.start_time + " & " + time_data.end_time;
                 start_time = time_data.start_time;
                 end_time = time_data.end_time;
                 setMessage(scheduled_time);
-                if (currTime.toLocaleDateString() === time_data.date) {
-                    if (currTime.toLocaleTimeString() >= time_data.start_time) {
+                if (currentDate === time_data.date) {
+                    if (currentTime >= time_data.start_time) {
                         console.log("Correct");
                         setProjectDisplay(true);
                     }
-                    if (currTime.toLocaleTimeString() >= time_data.end_time) {
+                    if (currentTime >= time_data.end_time) {
                         console.log("Not Correct");
                         setProjectDisplay(false);
                     }
