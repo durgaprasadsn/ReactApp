@@ -44,7 +44,7 @@ export default function Login(){
             if (user) {
                 console.log(user.email);
                 if (user.email === "admin@gmail.com") {
-                    navigate("/admin/timeupdate");
+                    navigate("/admin/view");
                 } else {
                     navigate("/home");
                 }

@@ -14,15 +14,15 @@ const Home = () => {
     const [selectedProject, setSelectedProject] = useState(null);
     const [displayState, setDisplayState] = useState(null);
     const [selectedBid, setSelectedBid] = useState(null);
-    const [selectDate, setSelectDate] = useState(dayjs().format('DD/MM/YYYY'));
-    const [startTime, setStartTime] = useState(dayjs().format('HH:mm'));
-    const [endTime, setEndTime] = useState(dayjs().format('HH:mm'));
+    const [selectDate, setSelectDate] = useState(null);
+    const [startTime, setStartTime] = useState(null);
+    const [endTime, setEndTime] = useState(null);
     const [isSuccessAlertVisible, setSuccessAlertVisible] = useState(false);
 
     const reference = ref(db, "projects/");
     const admin_ref = ref(db, "admin/");
     const [currentTime, setCurrentTime] = useState(new Date());
-    console.log(dayjs().format('DD/MM/YYYY'));
+    // console.log(dayjs().format('YYYY-MM-DD'));
     useEffect(() => {
         // Subscribe to changes in the database
         const unsubscribe = onValue(reference, (snapshot) => {
@@ -77,7 +77,7 @@ const Home = () => {
         fetchData();
 
         // Cleanup function not required for this useEffect
-    }, [selectedProject]); // Run this effect whenever selectedProject changes
+    }, [selectedProject, selectDate]); // Run this effect whenever selectedProject changes
 
     const [cardState,setCardState]=React.useState(null);
     var isUpdate = false;
@@ -119,14 +119,18 @@ const Home = () => {
         console.log("Project selected " + JSON.stringify(project));
         setSelectedProject(project);
         setSuccessAlertVisible(false);
+        setStartTime(null);
+        setEndTime(null);
+        setSelectDate(null);
         if (project) {
             const ref_proj = ref(db, "admin/" + project.projectName);
             onValue(ref_proj, (snapshot) => {
                 const data = snapshot.val()
                 if (!!data) {
                     // console.log("Loggg " + JSON.stringify(data));
-                    console.log("Data from admin " + data.date + " " + data.start_time + " " + data.end_time);
-                    setSelectDate(data.selectDate);
+                    console.log("Check the time " + data.start_time)
+                    setSelectDate(dayjs(data.date, "YYYY-MM-DD"));
+                    console.log("Date updated in selectDate " + selectDate)
                     setStartTime(data.start_time);
                     setEndTime(data.end_time);
                 }
@@ -135,34 +139,35 @@ const Home = () => {
     };
 
     function updateDate(date) {
-        console.log("Start Date " + dayjs(date).format('DD/MM/YYYY'));
+        console.log("Start Date " +  date + dayjs(dayjs(date).format('YYYY-MM-DD')));
         
-        const date_selected = dayjs(date).format('DD/MM/YYYY')
+        const date_selected = dayjs(dayjs(date).format('YYYY-MM-DD'));
         setSelectDate(date_selected);
         
     }
 
     function updateStartTime(time) {
-        console.log("Start Time " + dayjs(time).format('HH:mm'));
-        const start_time = dayjs(time).format('HH:mm')
+        console.log("Start Time " + dayjs(time).format('HH:mm:ss'));
+        const start_time = dayjs(time).format('HH:mm:ss')
         setStartTime(start_time);
         console.log("Check the date state " + selectDate);
     }
 
     function updateEndTime(time) {
-        console.log("End Time " + dayjs(time).format('HH:mm'));
-        const end_time = dayjs(time).format('HH:mm')
+        console.log("End Time " + dayjs(time).format('HH:mm:ss'));
+        const end_time = dayjs(time).format('HH:mm:ss')
         setEndTime(end_time);
     }
     const updateProject = async () => {
-        console.log("Update Project " + selectDate + " start " + startTime + " end " + endTime + " selected Project " + selectedProject.projectName);
+        console.log("Update Project " + dayjs(selectDate.format("YYYY-MM-DD")) + " start " + startTime + " end " + endTime + " selected Project " + selectedProject.projectName);
         const path_update = "admin/" + selectedProject.projectName;
         const updates = {};
         updates[path_update] = {
-            date: selectDate,
+            date: dayjs(selectDate).format('YYYY-MM-DD'),
             start_time: startTime,
             end_time: endTime
         }
+        console.log("Updates " + JSON.stringify(updates));
         update(ref(db), updates).then( () => {
             setSuccessAlertVisible(true);
             console.log("SUCCESS");
@@ -193,13 +198,13 @@ const Home = () => {
                         )
                     ))}  */}
                     {selectedProject && <>
-                        <DatePickerCustom label="Select Date"  onDateChange={updateDate}/>
+                        <DatePickerCustom label="Date" selectedDate={selectDate}  onDateChange={updateDate}/>
                             <div className='flex justify-center'>
                                 <div className='mr-4'>
-                                    <BasicTimePicker label='Start Time'  onTimeChange={updateStartTime} />
+                                    <BasicTimePicker label='Start Time' selectedTime={startTime}  onTimeChange={updateStartTime} />
                                 </div>
                                 <div>
-                                    <BasicTimePicker label='End Time'  onTimeChange={updateEndTime} />
+                                    <BasicTimePicker label='End Time' selectedTime={endTime}  onTimeChange={updateEndTime} />
                                 </div>
                         </div>
                         <div className='flex justify-center p-3'>

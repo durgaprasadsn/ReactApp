@@ -33,6 +33,16 @@ const signupFields=[
         placeholder:"Email address"   
     },
     {
+        labelText:"Company Name",
+        labelFor:"companyname",
+        id:"companyname",
+        name:"companyname",
+        type:"companyname",
+        autoComplete:"companyname",
+        isRequired:true,
+        placeholder:"Company Name"   
+    },
+    {
         labelText:"Password",
         labelFor:"password",
         id:"password",

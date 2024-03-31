@@ -27,9 +27,10 @@ export default function Signup(){
   async function createAccount(){
     try {
       setError(null);
-      var email, password, confirmpassword;
+      var email, password, confirmpassword, companyName;
       
       for (const [key, value] of Object.entries(signupState)) {
+        console.log("Signup key and value " + key + " " + value);
           if (key === 'emailaddress') {
               email = value;
           }
@@ -39,12 +40,18 @@ export default function Signup(){
           if (key === 'confirmpassword') {
               confirmpassword = value;
           }
+          if (key === 'companyname') {
+            console.log("Company name " + value);
+            companyName = value;
+          }
       }
       if (password === confirmpassword) {
         const user = await signUp(email, password);
         console.log(user.email);
         navigate('/');
-        var json = {email: user.email};
+        console.log("Company Name " + companyName)
+        var json = {email: user.email, 'companyName': companyName};
+        console.log("JSON here " + JSON.stringify(json));
         insert('/users/' + user.uid, json);
       } else {
         setError("Password not matching");

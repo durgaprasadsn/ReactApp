@@ -5,7 +5,8 @@ import SelectBasic from '../components/DropDown';
 import { ref, onValue, update } from '@firebase/database';
 import { auth, db } from '../services/firebase';
 import moment from 'moment';
-const Home = () => {
+import AdminNavbarSimple from '../components/AdminNavbar';
+const AdminView = () => {
     // console.log("Check Authentication " + isAuthenticated());
     
     const [projects, setProjects] = useState([]);
@@ -14,10 +15,11 @@ const Home = () => {
     const [selectedBid, setSelectedBid] = useState(null);
     const [projectDisplay, setProjectDisplay] = useState(false);
     const [message, setMessage] = useState("");
+    const [users, setUsers] = useState(null);
 
     const reference = ref(db, "projects/");
     // const admin_ref = ref(db, "admin/");
-
+    
     const current = moment();
     const [currentTime, setCurrentTime] = useState(current.format('HH:mm'));
     const [currentDate, setCurrentDate] = useState(current.format('YYYY-MM-DD'));
@@ -92,6 +94,15 @@ const Home = () => {
             }
         });
 
+        const users_ref = ref(db, "users/");
+        onValue(users_ref, (snapshot) => {
+            if (snapshot.exists()) {
+                const users = snapshot.val();
+                console.log("Users present in db " + JSON.stringify(users));
+                setUsers(users);
+            }
+        });
+
         // Clean up the subscription when the component unmounts
         return () => unsubscribe();
     }, []);
@@ -143,7 +154,7 @@ const Home = () => {
 
     return (
         <>
-            <NavbarSimple />
+            <AdminNavbarSimple />
                 <>
                     <SelectBasic
                         options={projects}
@@ -152,9 +163,14 @@ const Home = () => {
                         labelKey="projectName"
                     />
                     {projectDisplay ? (displayState && Object.keys(displayState).map((key) => ( 
-                        (<div key={key} className='flex justify-center'>
-                        <CardSimple selectedProject={selectedProject} data={displayState[key]} flag={displayState[key].uid !== auth.currentUser.uid} />
-                        </div>
+                        (<>
+                            <div className='flex justify-center'>
+                                <p>{users[displayState[key]['uid']]['companyName']}</p>
+                            </div>
+                            <div key={key} className='flex justify-center'>
+                                <CardSimple selectedProject={selectedProject} data={displayState[key]} flag={displayState[key].uid !== auth.currentUser.uid} />
+                            </div>
+                        </>
                         )
                     ))): (selectedProject && <>
                     <div className='flex justify-center h-screen'>
@@ -166,4 +182,4 @@ const Home = () => {
     );
 };
 
-export default Home;
+export default AdminView;

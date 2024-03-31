@@ -10,6 +10,7 @@ import Home from './pages/Home';
 import Register from './pages/Register';
 import Admin from './pages/Admin';
 import AdminRegister from './pages/AdminRegister';
+import AdminView from './pages/AdminView';
 
 function App() {
   return (
@@ -24,6 +25,7 @@ function App() {
             <Route path="/register" element={<Register/>} />
             <Route path="/admin/timeupdate" element={<Admin/>} />
             <Route path="/admin/register" element={<AdminRegister/>} />
+            <Route path="/admin/view" element={<AdminView/>} />
         </Routes>
       </BrowserRouter>
     </div>
