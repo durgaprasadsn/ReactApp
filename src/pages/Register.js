@@ -80,7 +80,7 @@ const Register = () => {
         if (!!dataFromDB) {
           console.log("Project is already registered " + JSON.stringify(dataFromDB));
           // TO DO Make sure to change this back to false once the testing is done
-          setIsRegistered(true);
+          setIsRegistered(false);
         } else {
           console.log("Data not found");
           setIsRegistered(true);
