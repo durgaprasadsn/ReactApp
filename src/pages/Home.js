@@ -2,9 +2,10 @@ import React, { useState, useEffect } from 'react';
 import NavbarSimple from '../components/Navbar';
 import CardSimple from '../components/Card';
 import SelectBasic from '../components/DropDown';
-import { ref, onValue, update } from '@firebase/database';
+import { ref, onValue, update, get, child } from '@firebase/database';
 import { auth, db } from '../services/firebase';
 import moment from 'moment';
+import { getFromDB } from '../services/authService';
 const Home = () => {
     // console.log("Check Authentication " + isAuthenticated());
     
@@ -59,7 +60,7 @@ const Home = () => {
                 scheduled_time = time_data.date + " between " + time_data.start_time + " & " + time_data.end_time;
                 start_time = time_data.start_time;
                 end_time = time_data.end_time;
-                setMessage(scheduled_time);
+                setMessage("Scheduled time :" + scheduled_time);
                 if (currentDate === time_data.date) {
                     if (currentTime >= time_data.start_time) {
                         console.log("Correct");
@@ -106,22 +107,29 @@ const Home = () => {
         const fetchData = async () => {
             if (selectedProject != null) {
                 console.log("selected project here " + JSON.stringify(selectedProject) + JSON.stringify(selectedProject[0]));
-                const ref_proj = ref(db, selectedProject.projectName);
-                const snapshot = await onValue(ref_proj, (snapshot) => {
-                    const data = snapshot.val()
-                    if (!!data) {
-                        console.log("Loggg " + JSON.stringify(data));
-                        const bidArray = Object.entries(data).map(([key, value]) => ({
-                            uid: key,
-                            ...value,
-                        }));
-                        console.log("Bid Array " + JSON.stringify(bidArray));
-                        const desiredUid = auth.currentUser.uid;
-                        bidArray.sort((a, b) => (a.uid === desiredUid ? -1 : b.uid === desiredUid ? 1 : 0));
-                        setDisplayState(bidArray);
-                    }
-                });
-                console.log(snapshot);
+                if (selectedProject != null) {
+                    const ref_proj = ref(db, selectedProject.projectName);
+                    const snapshot = await onValue(ref_proj, (snapshot) => {
+                        const data = snapshot.val()
+                        if (!!data) {
+                            console.log("Loggg " + JSON.stringify(data));
+                            const bidArray = Object.entries(data).map(([key, value]) => ({
+                                uid: key,
+                                ...value,
+                            }));
+                            console.log("Bid Array " + JSON.stringify(bidArray));
+                            const desiredUid = auth.currentUser.uid;
+                            bidArray.sort((a, b) => (a.uid === desiredUid ? -1 : b.uid === desiredUid ? 1 : 0));
+                            setDisplayState(bidArray);
+                            console.log("Snapshot in get " + JSON.stringify(snapshot.val()));
+                            if (!(auth.currentUser.uid in data)) {
+                                setMessage("User has not registered");
+                                setProjectDisplay(false);
+                            }
+                        }
+                    });
+                    console.log(snapshot);
+                }
                 
             }
         };
@@ -139,6 +147,20 @@ const Home = () => {
             checkDateTime(project.projectName);
         }
         setDisplayState(null);
+        if (project) {
+            get(child(ref(db), project.projectName)).then((snapshot) => {
+                if (snapshot.exists()) {
+                    console.log("Snapshot in get " + JSON.stringify(snapshot.val()));
+                    if (!(auth.currentUser.uid in snapshot.val())) {
+                        setMessage("User has not registered");
+                        setProjectDisplay(false);
+                    }
+                } else {
+                    setMessage("User has not registered");
+                    setProjectDisplay(false);
+                }
+            });
+        }
     };
 
     return (
@@ -158,7 +180,7 @@ const Home = () => {
                         )
                     ))): (selectedProject && <>
                     <div className='flex justify-center h-screen'>
-                        <h3>Scheduled time : {message}</h3>
+                        <h3>{message}</h3>
                     </div></>)} 
                 </>      
             {/* {displayState && <CardSimple value={JSON.stringify(displayState)} />} */}
